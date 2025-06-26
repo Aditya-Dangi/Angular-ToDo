@@ -1,0 +1,70 @@
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h1 class="text-center m-2">My ToDo List</h1>
+      <h4 class="text-center" style="color: blueviolet;">
+        {{currentTime}}
+      </h4>
+      <form class="d-flex gap-2 mb-4" [formGroup]="todoForm" (ngSubmit)="addTodo()">
+        <input
+          type="text"
+          formControlName="todoTitle"
+          class="form-control"
+          placeholder="Enter a task"
+        >
+        <input
+          type="time"
+          formControlName="dueTime"
+          placeholder="Due Time (Optional)"
+          class="form-control"
+        >
+        <button type="submit" class="btn btn-primary" [disabled] = "todoForm.invalid">
+          Add
+        </button>
+      </form>
+
+      <ul class="list-group">
+        <li
+          class="list-group-item d-flex justify-content-between align-items-start flex-wrap"
+          *ngFor="let todo of todos"
+        >
+        <div class="w-75 pe-2">
+          <div class="form-check">
+            <input
+              type="checkbox"
+              class="form-check-input me-2"
+              [checked]="todo.completed"
+              (change)="toggle(todo.id)"
+              id="todo{{todo.id}}"
+            >
+            <label
+              class="form-check-label text-break"
+              [ngClass]="{ 'text-decoration-line-through text-muted': todo.completed||isOverDue(todo) }"
+              for="todo{{todo.id}}"
+            >
+              {{ todo.title }}
+            </label>
+          </div>
+
+          <small
+            class="text-muted mt-1 text-wrap"
+            style="word-break: break-word; white-space: normal;"
+            *ngIf="todo.dueTime"
+          >
+            {{ todo.dueTime | dueTimeStatus }}
+          </small>
+        </div>
+
+        <div>
+          <button
+            class="btn btn-sm btn-danger ms-2"
+            (click)="delete(todo.id)"
+          >
+            Delete
+          </button>
+        </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
