@@ -44,4 +44,19 @@ export class TodoService {
       this.saveTodos();
     }
   }
+
+  increaseDueTime(todo: ToDo, minutesToBeAdded: number){
+    if(!todo.dueTime) return;
+    const[h, m] = todo.dueTime?.split(':').map(Number);
+    const due = new Date();
+    due.setHours(h,m,0,0);
+    due.setMinutes(due.getMinutes() + minutesToBeAdded);
+
+    const newHours = String(due.getHours()).padStart(2, '0');
+    const newMinutes = String(due.getMinutes()).padStart(2, '0');
+
+    todo.dueTime = `${newHours}:${newMinutes}`;
+
+    this.saveTodos();
+  }
 }

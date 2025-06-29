@@ -1,5 +1,5 @@
 import { TodoService } from './../../services/todo.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToDo } from 'src/app/models/todo.model';
 
@@ -13,7 +13,7 @@ export class TodoListComponent implements OnInit {
   todoForm !: FormGroup;
   todos: ToDo[] = [];
 
-  constructor(private fb: FormBuilder, private todoService: TodoService) { }
+  constructor(private fb: FormBuilder, private todoService: TodoService, private eRef: ElementRef) { }
 
   ngOnInit(): void {
     this.todoForm = this.fb.group({
@@ -64,4 +64,29 @@ export class TodoListComponent implements OnInit {
     return now>due;
   }
 
+
+  @ViewChild('dropdownMenu') dropdownMenuRef?: ElementRef;
+  @ViewChild('dropdownToggle') dropdownToggleRef?: ElementRef;
+  dropdownOpenId: number | null = null;
+  toggleDropdown(todoId: number): void {
+    if (this.dropdownOpenId === todoId) {
+      this.dropdownOpenId = null;
+    } else {
+      this.dropdownOpenId = todoId;
+    }
+  }
+  @HostListener('document:click', ['$event'])
+  handleOutsideClick(event: MouseEvent) {
+    const clickedInsideMenu = this.dropdownMenuRef?.nativeElement.contains(event.target);
+    const clickedToggleBtn = this.dropdownToggleRef?.nativeElement.contains(event.target);
+
+    if (!clickedInsideMenu && !clickedToggleBtn) {
+      this.dropdownOpenId = null;
+    }
+  }
+
+  increaseDueTime(todo: ToDo, minutes: number){
+    this.todoService.increaseDueTime(todo, minutes);
+    this.todos = this.todoService.getTodos();
+  }
 }

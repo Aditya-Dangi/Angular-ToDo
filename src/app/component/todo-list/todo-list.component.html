@@ -1,7 +1,7 @@
 <div class="container mt-5">
   <div class="card shadow-sm">
     <div class="card-body">
-      <h1 class="text-center m-2">My ToDo List</h1>
+      <h1 class="text-center m-2" style="text-shadow: 1px 1px 2px rgba(0,0,0,1); text-decoration: underline;">ToDo List</h1>
       <h4 class="text-center" style="color: blueviolet;">
         {{currentTime}}
       </h4>
@@ -25,7 +25,8 @@
 
       <ul class="list-group">
         <li
-          class="list-group-item d-flex justify-content-between align-items-start flex-wrap"
+          class="list-group-item d-flex justify-content-between align-items-start flex-wrap mb-1"
+          [ngClass]="{ 'bg-secondary-subtle text-muted': isOverDue(todo) }"
           *ngFor="let todo of todos"
         >
         <div class="w-75 pe-2">
@@ -33,7 +34,7 @@
             <input
               type="checkbox"
               class="form-check-input me-2"
-              [checked]="todo.completed"
+              [checked]="todo.completed || isOverDue(todo)"
               (change)="toggle(todo.id)"
               id="todo{{todo.id}}"
             >
@@ -53,6 +54,28 @@
           >
             {{ todo.dueTime | dueTimeStatus }}
           </small>
+        </div>
+
+        <div>
+          <button
+            class="btn btn-sm btn-outline-primary"
+            (click)="toggleDropdown(todo.id)" style="cursor: pointer;" #dropdownToggle
+          >
+            + Add Time
+          </button>
+
+          <ul
+            class="dropdown-menu show position-absolute mt-1"
+            *ngIf="dropdownOpenId === todo.id"
+            style="display: block;" #dropdownMenu
+          >
+            <li><a class="dropdown-item" (click)="increaseDueTime(todo, 5)" style="cursor: pointer;">+5 min</a></li>
+            <li><a class="dropdown-item" (click)="increaseDueTime(todo, 10)" style="cursor: pointer;">+10 min</a></li>
+            <li><a class="dropdown-item" (click)="increaseDueTime(todo, 15)" style="cursor: pointer;">+15 min</a></li>
+            <li><a class="dropdown-item" (click)="increaseDueTime(todo, 20)" style="cursor: pointer;">+20 min</a></li>
+            <li><a class="dropdown-item" (click)="increaseDueTime(todo, 25)" style="cursor: pointer;">+25 min</a></li>
+            <li><a class="dropdown-item" (click)="increaseDueTime(todo, 30)" style="cursor: pointer;">+30 min</a></li>
+          </ul>
         </div>
 
         <div>
